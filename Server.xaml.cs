@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Chat.models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,47 +23,43 @@ namespace Chat
     /// </summary>
     public partial class Server : Window
     {
-        private Socket socket;
-        private List<Socket> clients = new List<Socket>();
+        public ServerModel servers;
+        CancellationTokenSource token = new CancellationTokenSource();
+
         public Server()
         {
             InitializeComponent();
-            IPEndPoint ipPoint = new IPEndPoint(IPAddress.Any, 8888);
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Bind(ipPoint);
-            socket.Listen(1000);
-            ListenClients();
+            servers = new ServerModel();
+            GetMess();
         }
 
-        private async Task ListenClients()
+
+        private void SendMessBtn_Click(object sender, RoutedEventArgs e)
         {
-            while (true)
+            string mess = SendBox.Text;
+            MessagesLbx.Items.Add(servers.sendMess(mess));
+            SendBox.Text = "";
+        }
+
+        private async Task GetMess()
+        {
+            while (!token.IsCancellationRequested)
             {
-                var client = await socket.AcceptAsync();
-                clients.Add(client);
+                await servers.ReciveMessage(servers.server);
             }
+
         }
 
-        private async Task ReciveMessage(Socket client)
+        private void Window_Closed(object sender, EventArgs e)
         {
-            while (true)
-            {
-                byte[] bytes = new byte[1024];
-                await client.ReceiveAsync(bytes, SocketFlags.None);
-                string message = Encoding.UTF8.GetString(bytes);
-                MessagesLbx.Items.Add($"[Телеграмма от {client.RemoteEndPoint}]: {message}");
-
-                foreach (var user in clients)
-                {
-                    SendMessage(user, message);
-                }
-            }
+            servers.SendAllUser("/exit", "/exit");
         }
 
-        private async Task SendMessage(Socket client, string message)
+        private void ClosedBtn_Click(object sender, RoutedEventArgs e)
         {
-            byte[] bytes = Encoding.UTF8.GetBytes(message);
-            await client.SendAsync(bytes, SocketFlags.None);
+            servers.SendAllUser("/exit", "/exit");
         }
     }
+
+   
 }

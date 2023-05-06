@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Chat.models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,9 +22,43 @@ namespace Chat
     /// </summary>
     public partial class Connect : Window
     {
-        public Connect()
+
+        private CancellationTokenSource token = new CancellationTokenSource();
+
+        private ConnecntModel connecntModel;
+        public Connect(string ip, string name)
         {
             InitializeComponent();
+            connecntModel = new ConnecntModel(ip, name);
+            GetMess();
+
+            CommLbx.Items.Add("/username");
+            CommLbx.Items.Add("/exit");
+            CommLbx.Items.Add("/allusers");
         }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageString.Text == "/exit")
+            {
+                this.Close();
+            }
+            await connecntModel.SendMessage(MessageString.Text);
+
+            MessageString.Text = "";
+        }
+
+        private async Task GetMess()
+        {
+            while (!token.IsCancellationRequested)
+            {
+                string message = await connecntModel.ReciveMessage();
+
+                MessageLbx.Items.Add(message);
+            }
+
+        }
+
+
     }
 }

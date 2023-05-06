@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chat"
         mc:Ignorable="d"
-        Title="Server" Height="450" Width="800">
+        Title="Server" Height="450" Width="800" Closed="Window_Closed">
     <Grid Background="#b888d6">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -18,16 +18,15 @@
         </Grid.RowDefinitions>
 
         <ListBox x:Name="MessagesLbx" Grid.Row="1" Grid.Column="1"/>
-        <Button Grid.Column="1" Background="#8e42bd" Content="Просмотреть логи" Cursor="Hand"/>
         <Border CornerRadius="10" BorderThickness="2" Background="#d688cd" Height="40" Margin="2">
             <Label Content="Пользователи:" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" FontSize="20"/>
         </Border>
 
-        <ListBox Grid.Row="1"/>
+        <ListBox x:Name="NamesLbx" Grid.Row="1"/>
 
-        <Button Grid.Row="2" Grid.Column="1" Width="70" HorizontalAlignment="Left" Content="Exit" Background="#8e42bd"/>
-        <Button Grid.Row="2" Grid.Column="1" Width="110" HorizontalAlignment="Right" Content="Отправить" Background="#8e42bd"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Width="350" Margin="0 0 30 0" Height="40"/>
+        <Button x:Name="ClosedBtn" Click="ClosedBtn_Click" Grid.Row="2" Grid.Column="1" Width="70" HorizontalAlignment="Left" Content="Exit" Background="#8e42bd"/>
+        <Button x:Name="SendMessBtn" Grid.Row="2" Grid.Column="1" Width="110" HorizontalAlignment="Right" Content="Отправить" Background="#8e42bd" Click="SendMessBtn_Click"/>
+        <TextBox x:Name="SendBox" Grid.Row="2" Grid.Column="1" Width="350" Margin="0 0 30 0" Height="40"/>
 
     </Grid>
 </Window>

@@ -30,7 +30,8 @@ namespace Chat
         {
             if (IP.Text != null && Login.Text != null)
             {
-
+                Connect server = new Connect(IP.Text, Login.Text);
+                server.Show();
             }
         }
 

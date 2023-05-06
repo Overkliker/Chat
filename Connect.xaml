@@ -17,15 +17,15 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
-        <ListBox Grid.Row="1" Grid.Column="1"/>
+        <ListBox x:Name="MessageLbx" Grid.Row="1" Grid.Column="1"/>
         <Border CornerRadius="10" BorderThickness="2" Background="#d688cd" Height="40" Margin="2">
-            <Label Content="Пользователи:" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" FontSize="20"/>
+            <Label Content="Команды:" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" FontSize="20"/>
         </Border>
 
-        <ListBox Grid.Row="1"/>
+        <ListBox x:Name="CommLbx" Grid.Row="1"/>
 
         <Button Grid.Row="2" Grid.Column="1" Width="70" HorizontalAlignment="Left" Content="Exit" Background="#8e42bd"/>
-        <Button Grid.Row="2" Grid.Column="1" Width="110" HorizontalAlignment="Right" Content="Отправить" Background="#8e42bd"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Width="350" Margin="0 0 30 0" Height="40"/>
+        <Button Grid.Row="2" Grid.Column="1" Width="110" HorizontalAlignment="Right" Content="Отправить" Background="#8e42bd" Click="Button_Click"/>
+        <TextBox x:Name="MessageString" Grid.Row="2" Grid.Column="1" Width="350" Margin="0 0 30 0" Height="40"/>
     </Grid>
 </Window>
