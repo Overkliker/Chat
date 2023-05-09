@@ -30,25 +30,18 @@ namespace Chat
         {
             InitializeComponent();
             servers = new ServerModel();
-            GetMess();
+            
         }
 
 
         private void SendMessBtn_Click(object sender, RoutedEventArgs e)
         {
-            string mess = SendBox.Text;
-            MessagesLbx.Items.Add(servers.sendMess(mess));
-            SendBox.Text = "";
+            /*string mess = SendBox.Text;
+            servers.sendMess(mess);
+            SendBox.Text = "";*/
         }
 
-        private async Task GetMess()
-        {
-            while (!token.IsCancellationRequested)
-            {
-                await servers.ReciveMessage(servers.server);
-            }
-
-        }
+        
 
         private void Window_Closed(object sender, EventArgs e)
         {

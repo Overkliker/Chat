@@ -39,11 +39,7 @@ namespace Chat
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageString.Text == "/exit")
-            {
-                this.Close();
-            }
-            await connecntModel.SendMessage(MessageString.Text);
+            connecntModel.SendMessage(MessageString.Text);
 
             MessageString.Text = "";
         }
@@ -53,8 +49,18 @@ namespace Chat
             while (!token.IsCancellationRequested)
             {
                 string message = await connecntModel.ReciveMessage();
+                if (message != null)
+                {
+                    if (message.Replace("\0", string.Empty) == "$/exit$")
+                    {
+                        token.Cancel();
+                        this.Close();
+                    }
 
-                MessageLbx.Items.Add(message);
+                    MessageLbx.Items.Add(message);
+                }
+
+                
             }
 
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Chat.models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,7 +40,8 @@ namespace Chat
         {
             if (Login.Text != null)
             {
-                Server server = new Server();
+                ServerModel serverMod = new ServerModel();
+                Connect server = new Connect("127.0.0.1", Login.Text);
                 server.Show();
             }
 

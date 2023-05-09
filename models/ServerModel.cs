@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,16 +28,15 @@ namespace Chat.models
         };
 
 
-        IPEndPoint ipPoint = new IPEndPoint(IPAddress.Any, 8888);
+        
         public ServerModel()
         {
+            IPEndPoint ipPoint = new IPEndPoint(IPAddress.Any, 8888);
             server.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             server.socket.Bind(ipPoint);
-            server.socket.Listen(5);
+            server.socket.Listen(10);
             clients.Add(server);
             ListenClients();
-
-            
         }
 
         public async Task ListenClients()
@@ -87,12 +87,10 @@ namespace Chat.models
             if (message.Contains("/username"))
             {
                 string userName = message.Remove(0, 9);
-                foreach (var element in clients)
+                
+                if (clients.Count == 2)
                 {
-                    if (element.Name == userName && element.socket != socket.socket)
-                    {
-                        userName += 1;
-                    }
+                    clients[1].role = 0;
                 }
 
                 if (socket.Name == null)
@@ -106,35 +104,44 @@ namespace Chat.models
 
             else if (message.Contains("/exit"))
             {
-                socket.token.Cancel();
-
-                socket.token.Dispose();
-
-                for (int i = 0; i < clients.Count(); i++)
-                {
-                    if (socket.Name == clients[i].Name)
-                    {
-                        clients.Remove(clients[i]);
-                    }
-                }
 
                 if (socket.role == (int)Roles.Admin)
                 {
                     foreach (var val in clients)
                     {
-                        val.socket.Close();
-                        await SendMessage(val, "/exit");
+                        if (clients.IndexOf(val) != 0)
+                        {
+                            await SendMessage(val, "$/exit$");
+                            val.socket.Close();
+                        }
+                        
+                    }
+
+                    clients[0].socket.Close();
+                    clients[0].socket.Dispose();
+                    Logs.clear();
+
+                    for (int i = 0; i < clients.Count(); i++)
+                    {
+                            clients.Remove(clients[i]);
                     }
                 }
-
-                if (clients.Count < 1)
+                else
                 {
-                    socket.socket.Close();
-                    Logs.clear();
+                    await SendMessage(socket, "$/exit$");
+                    socket.token.Cancel();
+                    socket.token.Dispose();
+
+                    for (int i = 0; i < clients.Count(); i++)
+                    {
+                        if (socket.Name == clients[i].Name)
+                        {
+                            clients.Remove(clients[i]);
+                        }
+                    }
+
+                    await SendAllUser(ServermModel.ValidMessage(socket.socket, clients, server, $"Пользователь {socket.Name} вышел", true), "gg");
                 }
-                await SendAllUser(ServermModel.ValidMessage(socket.socket, clients, server, $"Пользователь {socket.Name} вышел", true), "gg");
-
-
             }
 
             else if (message.Contains("/allUser"))
@@ -171,13 +178,6 @@ namespace Chat.models
                 }
             }
 
-        }
-
-        public string sendMess(string message)
-        {
-            string validString = ServermModel.ValidMessage(server.socket, clients, server, message);
-            SendAllUser(validString, message);
-            return validString;
         }
     }
 }
